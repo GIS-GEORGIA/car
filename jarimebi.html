@@ -66,6 +66,10 @@
   .lcard a.stretch{position:relative}
   .llist{margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
   .llist a{font-size:.9rem;word-break:break-word}
+  .contacts .lcard{gap:4px}
+  .contacts .llist{gap:7px;margin-top:2px}
+  .contacts .llist li{font-size:.85rem;color:var(--text);line-height:1.45}
+  .contacts .llist li a{font-weight:600}
 
   h2.sec{margin:30px 0 4px;font-size:1.3rem}
   .sub{color:var(--muted);margin:0 0 12px;font-size:.9rem}
@@ -129,30 +133,101 @@
   <div class="links">
     <div class="lcard">
       <div class="ic">📸</div>
-      <h3>შსს ვიდეოჯარიმები</h3>
-      <p>ფოტო/ვიდეო კონტროლის ჯარიმები.</p>
-      <ul class="llist"><li><a href="https://videos.police.ge/" target="_blank" rel="noopener">videos.police.ge ↗</a></li></ul>
+      <h3>ვიდეო და საპატრულო ჯარიმები</h3>
+      <p>ფოტო/ვიდეო კონტროლისა და საპატრულო პოლიციის ჯარიმები.</p>
+      <ul class="llist">
+        <li><a href="https://videos.police.ge/" target="_blank" rel="noopener">videos.police.ge ↗</a></li>
+        <li><a href="https://protocols.ge/" target="_blank" rel="noopener">protocols.ge ↗</a></li>
+      </ul>
     </div>
     <div class="lcard">
       <div class="ic">🧾</div>
-      <h3>საჯარიმო ქვითრები</h3>
+      <h3>გამოქვეყნებული საჯარიმო ქვითრები</h3>
       <p>ადმინისტრაციული სამართალდარღვევის ოქმები.</p>
       <ul class="llist">
-        <li><a href="https://protocols.ge/" target="_blank" rel="noopener">protocols.ge ↗</a></li>
-        <li><a href="https://police.ge/protocol/index.php#" target="_blank" rel="noopener">police.ge/protocol ↗</a></li>
+        <li><a href="https://police.ge/protocol/index.php" target="_blank" rel="noopener">police.ge/protocol ↗</a></li>
+        <li><a href="https://police.ge/municipal/index.php" target="_blank" rel="noopener">police.ge/municipal ↗</a></li>
       </ul>
     </div>
     <div class="lcard">
       <div class="ic">🚌</div>
-      <h3>თბილისის სატრანსპორტო კომპანია</h3>
-      <p>სატრანსპორტო ზოლისა და პარკირების ჯარიმები (TTC).</p>
-      <ul class="llist"><li><a href="https://ttc.com.ge/ka/penalties" target="_blank" rel="noopener">ttc.com.ge ↗</a></li></ul>
+      <h3>თბილისის ტრანსპორტი</h3>
+      <p>სატრანსპორტო ზოლი და ავტობუსის ჯარიმები.</p>
+      <ul class="llist">
+        <li><a href="https://tbilisi-transport.ssg.gov.ge/home/select" target="_blank" rel="noopener">tbilisi-transport.ssg.gov.ge ↗</a></li>
+        <li><a href="https://ttc.com.ge/ka/penalties" target="_blank" rel="noopener">ttc.com.ge/ka/penalties ↗</a></li>
+      </ul>
     </div>
     <div class="lcard">
       <div class="ic">🅿️</div>
       <h3>თბილისის პარკინგი</h3>
       <p>ზონალურ-საათობრივი პარკირების ჯარიმები.</p>
       <ul class="llist"><li><a href="https://parking.tbilisi.gov.ge/fines?isTransit=false" target="_blank" rel="noopener">parking.tbilisi.gov.ge ↗</a></li></ul>
+    </div>
+  </div>
+
+  <h2 class="sec">📞 საკონტაქტო ინფორმაცია</h2>
+  <p class="sub">სასარგებლო ტელეფონები, ცხელი ხაზები და ოფიციალური რესურსები:</p>
+  <div class="links contacts">
+    <div class="lcard">
+      <div class="ic">🚔</div>
+      <h3>პოლიცია / შსს</h3>
+      <ul class="llist">
+        <li>☎️ <a href="tel:0322414242">032 241 42 42</a> — საპატრულო პოლიციის ჯარიმების განყოფილება</li>
+        <li>🆘 <a href="tel:112">112</a> — გადაუდებელი დახმარება (პოლიცია/სასწრაფო/სახანძრო)</li>
+        <li>☎️ <a href="tel:126">126</a> — შსს გენერალური ინსპექციის ცხელი ხაზი</li>
+        <li>☎️ <a href="tel:0322412222">(032) 241 22 22</a> — შსს ცხელი ხაზი</li>
+        <li>✉️ <a href="mailto:presscenter@pol.ge">presscenter@pol.ge</a></li>
+        <li>🌐 <a href="https://www.police.ge" target="_blank" rel="noopener">www.police.ge ↗</a></li>
+      </ul>
+    </div>
+    <div class="lcard">
+      <div class="ic">🏛️</div>
+      <h3>თბილისის მერია</h3>
+      <ul class="llist">
+        <li>☎️ <a href="tel:0322722222">(032) 272 22 22</a> — ცხელი ხაზი</li>
+        <li>☎️ <a href="tel:+995322722222">+995 322 72 22 22</a> — საზღვარგარეთიდან</li>
+      </ul>
+    </div>
+    <div class="lcard">
+      <div class="ic">🚌</div>
+      <h3>თბილისის სატრანსპორტო კომპანია</h3>
+      <ul class="llist">
+        <li>☎️ <a href="tel:0322388888">(032) 238 88 88</a></li>
+        <li>☎️ <a href="tel:0322934444">(032) 293 44 44</a> · <a href="tel:+995322934444">+995 322 93 44 44</a></li>
+        <li>☎️ <a href="tel:+995322933232">+995 322 93 32 32</a></li>
+        <li>🛠️ <a href="tel:+995322357777">+995 322 35 77 77</a> — საავარიო სამსახური (შიდა 2211/2212)</li>
+        <li>✉️ <a href="mailto:pr@metro.ge">pr@metro.ge</a></li>
+        <li>🌐 <a href="https://www.ttc.com.ge" target="_blank" rel="noopener">www.ttc.com.ge ↗</a></li>
+      </ul>
+    </div>
+    <div class="lcard">
+      <div class="ic">⚖️</div>
+      <h3>სასამართლო / აღსრულება</h3>
+      <ul class="llist">
+        <li>☎️ <a href="tel:0322599999">(032) 259 99 99</a> — სასამართლოს ინფორმაციის ცენტრი</li>
+        <li>☎️ <a href="tel:0322396969">(032) 239 69 69</a> — აღსრულების ეროვნული ბიურო</li>
+      </ul>
+    </div>
+    <div class="lcard">
+      <div class="ic">🪪</div>
+      <h3>შსს მომსახურების სააგენტო</h3>
+      <ul class="llist">
+        <li>☎️ <a href="tel:1272">1272</a> — ცხელი ხაზი</li>
+        <li>☎️ <a href="tel:+995322419191">+995 322 41 91 91</a> — საზღვარგარეთიდან</li>
+        <li>✉️ <a href="mailto:info@sa.gov.ge">info@sa.gov.ge</a></li>
+        <li>🌐 <a href="https://www.sa.gov.ge" target="_blank" rel="noopener">www.sa.gov.ge ↗</a></li>
+      </ul>
+    </div>
+    <div class="lcard">
+      <div class="ic">🛣️</div>
+      <h3>საავტომობილო გზების დეპარტამენტი</h3>
+      <ul class="llist">
+        <li>☎️ <a href="tel:+995322313076">+995 322 31 30 76</a></li>
+        <li>☎️ <a href="tel:+995322370508">+995 322 37 05 08</a> — შიდა 282</li>
+        <li>✉️ <a href="mailto:info@georoad.ge">info@georoad.ge</a></li>
+        <li>🌐 <a href="https://www.georoad.ge" target="_blank" rel="noopener">www.georoad.ge ↗</a></li>
+      </ul>
     </div>
   </div>
 
