@@ -215,13 +215,12 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
   }
 
   // ---- base styles ----
-  var GLYPHS='https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf';
+  function raster(tiles,attr){return {version:8,sources:{base:{type:'raster',tiles:tiles,tileSize:256,attribution:attr}},layers:[{id:'base',type:'raster',source:'base'}]};}
+  var CARTO='&copy; <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>';
   var STYLES={
-    light:'https://tiles.openfreemap.org/styles/positron',
-    dark:'https://tiles.openfreemap.org/styles/dark',
-    sat:{version:8,glyphs:GLYPHS,
-      sources:{esri:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,attribution:'Imagery &copy; Esri'}},
-      layers:[{id:'esri',type:'raster',source:'esri'}]}
+    light:raster(['https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'],CARTO),
+    dark:raster(['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],CARTO),
+    sat:raster(['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],'Imagery &copy; <a href="https://www.esri.com" target="_blank">Esri</a>')
   };
 
   var map=new maplibregl.Map({
@@ -308,12 +307,14 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
   // regions need feature ids for hover state
   regions.features.forEach(function(f,i){ f.id=i; });
 
+  function hideLoader(){ var l=document.getElementById('loader'); if(l) l.classList.add('hide'); }
   map.on('load',function(){
     addOverlays(); buildMarkers();
-    setTimeout(function(){ document.getElementById('loader').classList.add('hide'); },300);
-    // fit to Georgia
     try{ map.fitBounds([[39.9,41.0],[46.8,43.6]],{padding:40,duration:0}); }catch(e){}
+    hideLoader();
   });
+  map.on('idle',hideLoader);   // definitely rendered
+  setTimeout(hideLoader,6000); // failsafe so the loader never sticks
 
   // ---- base switching ----
   var curBase='light';
