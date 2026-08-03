@@ -84,7 +84,9 @@ a.tbtn{text-decoration:none}
 
 /* map label markers */
 .mk-reg{font-weight:700;font-size:12px;color:var(--text);text-shadow:0 1px 3px var(--bg),0 0 2px var(--bg);pointer-events:none;white-space:nowrap}
+.mk-reg.occ{color:#e5484d}
 html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
+html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
 .mk-road{pointer-events:none;background:var(--intl);color:#fff;font-weight:800;font-size:10.5px;padding:1px 6px;border-radius:999px;
   box-shadow:0 1px 4px rgba(0,0,0,.4);white-space:nowrap}
 .mk-road.sh{background:var(--intl2);color:#1a1200}
@@ -153,11 +155,15 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
       </div>
     </div>
     <div class="grp">
-      <div class="lbl">შრეები</div>
-      <div class="row" data-layer="roads-intl"><span class="sw" style="background:var(--intl)"></span> საერთაშორისო გზები (S) <input type="checkbox" checked></div>
-      <div class="row" data-layer="roads-sh"><span class="sw" style="background:var(--intl2)"></span> შიდასახელმწიფოებრივი (Sh) <input type="checkbox" checked></div>
-      <div class="row" data-layer="regions"><span class="sw box" style="background:rgba(42,162,255,.5)"></span> რეგიონები <input type="checkbox" checked></div>
-      <div class="row" data-layer="border"><span class="sw" style="background:var(--text)"></span> ქვეყნის საზღვარი <input type="checkbox" checked></div>
+      <div class="lbl">❄️ ზამთრის გზები</div>
+      <div class="row" data-layer="roads-intl"><span class="sw" style="background:#e5484d"></span> საერთაშორისო მარშრუტები (S) <input type="checkbox" checked></div>
+      <div class="row" data-layer="roads-sh"><span class="sw" style="background:#f5a623"></span> შიდასახელმწიფოებრივი (Sh) <input type="checkbox" checked></div>
+    </div>
+    <div class="grp">
+      <div class="lbl">ტერიტორია</div>
+      <div class="row" data-layer="regions"><span class="sw box" style="background:rgba(91,143,249,.5)"></span> რეგიონები <input type="checkbox" checked></div>
+      <div class="row" data-layer="border"><span class="sw" style="background:#8493a8"></span> ქვეყნის საზღვარი <input type="checkbox" checked></div>
+      <div class="row" style="cursor:default"><span class="sw box" style="background:repeating-linear-gradient(-45deg,#e5484d 0 1.5px,transparent 1.5px 5px);border:1px solid #e5484d"></span> ოკუპირებული ტერიტორია <span style="margin-left:auto">🔒</span></div>
     </div>
     <div class="grp">
       <div class="lbl">წარწერები</div>
@@ -178,9 +184,10 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
     'Ajara':'აჭარა','Apkhazeti':'აფხაზეთი','Guria':'გურია','Imereti':'იმერეთი','Kakheti':'კახეთი',
     'Kvemo Kartli':'ქვემო ქართლი','Mtskheta-Mtianeti':'მცხეთა-მთიანეთი',
     'Racha-Lechkumi kvemo Svaneti':'რაჭა-ლეჩხუმი და ქვ. სვანეთი','Samegrelo-zemo Svaneti':'სამეგრელო-ზემო სვანეთი',
-    'Samtskhe-Javakheti':'სამცხე-ჯავახეთი','Shida Kartli':'შიდა ქართლი','South Ossetia':'ცხინვალის რეგიონი','Tbilisi':'თბილისი'
+    'Samtskhe-Javakheti':'სამცხე-ჯავახეთი','Shida Kartli':'შიდა ქართლი','South Ossetia':'შიდა ქართლი','Tbilisi':'თბილისი'
   };
-  var REGION_COLORS=['#2aa2ff','#34c759','#f2a00d','#e5484d','#a855f7','#14b8a6','#f472b6','#84cc16','#fb923c','#38bdf8','#c084fc','#22d3ee','#facc15'];
+  var OCCUPIED={'South Ossetia':1,'Apkhazeti':1};
+  var REGION_COLORS=['#5B8FF9','#5AD8A6','#5D7092','#F6BD16','#E8684A','#6DC8EC','#9270CA','#FF9D4D','#269A99','#FF99C3','#7DA8FF','#B5E48C','#C3A5E6'];
 
   // ---- prepare data ----
   var roads=(typeof json_roads_5!=='undefined')?json_roads_5:{type:'FeatureCollection',features:[]};
@@ -199,8 +206,11 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
   var idx=0;
   regions.features.forEach(function(f){
     var eng=f.properties.REGION_ENG||'';
+    var occ=!!OCCUPIED[eng];
+    f.properties.occupied=occ;
     f.properties.name_ka=REGION_KA[eng]||eng;
-    f.properties.color=REGION_COLORS[idx%REGION_COLORS.length]; idx++;
+    f.properties.color=occ?'#9aa4b2':REGION_COLORS[idx%REGION_COLORS.length];
+    if(!occ) idx++;
   });
 
   function bbox(geom){
@@ -212,6 +222,14 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
   function midline(geom){
     var line=geom.type==='MultiLineString'?geom.coordinates[Math.floor(geom.coordinates.length/2)]:geom.coordinates;
     return line[Math.floor(line.length/2)];
+  }
+
+  // diagonal red hatch for occupied territories (tiles seamlessly)
+  function makeHatch(){
+    var s=6,c=document.createElement('canvas');c.width=c.height=s;var x=c.getContext('2d');
+    x.strokeStyle='rgba(214,40,45,0.95)';x.lineWidth=1.5;x.lineCap='square';
+    x.beginPath();x.moveTo(0,s);x.lineTo(s,0);x.stroke();
+    return x.getImageData(0,0,s,s);
   }
 
   // ---- base styles ----
@@ -240,32 +258,45 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
     if(!map.getSource('roads')) map.addSource('roads',{type:'geojson',data:roads});
     if(!map.getSource('border')) map.addSource('border',{type:'geojson',data:border});
 
+    if(!map.hasImage('hatch')){ try{ map.addImage('hatch',makeHatch(),{pixelRatio:1}); }catch(e){} }
+
     if(!map.getLayer('regions-fill')) map.addLayer({id:'regions-fill',type:'fill',source:'regions',
-      paint:{'fill-color':['get','color'],'fill-opacity':['case',['boolean',['feature-state','hover'],false],0.42,0.20]}});
+      paint:{'fill-color':['get','color'],'fill-opacity':['case',['boolean',['feature-state','hover'],false],0.44,0.20]}});
+    if(!map.getLayer('regions-occ') && map.hasImage('hatch')) map.addLayer({id:'regions-occ',type:'fill',source:'regions',
+      filter:['==',['get','occupied'],true],paint:{'fill-pattern':'hatch','fill-opacity':0.85}});
     if(!map.getLayer('regions-line')) map.addLayer({id:'regions-line',type:'line',source:'regions',
-      paint:{'line-color':['get','color'],'line-width':1.4,'line-opacity':0.9}});
+      paint:{'line-color':['get','color'],'line-width':1.2,'line-opacity':0.85}});
+    if(!map.getLayer('regions-occ-line')) map.addLayer({id:'regions-occ-line',type:'line',source:'regions',
+      filter:['==',['get','occupied'],true],paint:{'line-color':'#e5484d','line-width':2,'line-dasharray':[2,1.6],'line-opacity':0.95}});
     if(!map.getLayer('border-line')) map.addLayer({id:'border-line',type:'line',source:'border',
-      paint:{'line-color':['case',['==',['get','x'],1],'#000','#0b1f33'],'line-width':2.6,'line-opacity':0.5}});
+      paint:{'line-color':'#8493a8','line-width':2.2,'line-opacity':0.7}});
+    // road casings (halo under the coloured line)
+    if(!map.getLayer('roads-sh-case')) map.addLayer({id:'roads-sh-case',type:'line',source:'roads',filter:['==',['get','kind'],'sh'],
+      layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(12,22,36,0.32)','line-width':['interpolate',['linear'],['zoom'],6,3,12,7]}});
+    if(!map.getLayer('roads-intl-case')) map.addLayer({id:'roads-intl-case',type:'line',source:'roads',filter:['==',['get','kind'],'intl'],
+      layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(12,22,36,0.4)','line-width':['interpolate',['linear'],['zoom'],6,4,12,9]}});
     if(!map.getLayer('roads-sh')) map.addLayer({id:'roads-sh',type:'line',source:'roads',filter:['==',['get','kind'],'sh'],
-      layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#f2a00d','line-width':['interpolate',['linear'],['zoom'],6,1.6,12,4]}});
+      layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#f5a623','line-width':['interpolate',['linear'],['zoom'],6,1.5,12,3.8]}});
     if(!map.getLayer('roads-intl')) map.addLayer({id:'roads-intl',type:'line',source:'roads',filter:['==',['get','kind'],'intl'],
       layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e5484d','line-width':['interpolate',['linear'],['zoom'],6,2.2,12,5.5]}});
     applyVisibility();
     wireInteractions();
   }
 
+  function setVis(ids,on){ ids.forEach(function(l){ if(map.getLayer(l)) map.setLayoutProperty(l,'visibility',on?'visible':'none'); }); }
   function applyVisibility(){
-    if(map.getLayer('roads-intl')) map.setLayoutProperty('roads-intl','visibility',vis['roads-intl']?'visible':'none');
-    if(map.getLayer('roads-sh')) map.setLayoutProperty('roads-sh','visibility',vis['roads-sh']?'visible':'none');
-    ['regions-fill','regions-line'].forEach(function(l){ if(map.getLayer(l)) map.setLayoutProperty(l,'visibility',vis['regions']?'visible':'none');});
-    if(map.getLayer('border-line')) map.setLayoutProperty('border-line','visibility',vis['border']?'visible':'none');
+    setVis(['roads-intl','roads-intl-case'],vis['roads-intl']);
+    setVis(['roads-sh','roads-sh-case'],vis['roads-sh']);
+    setVis(['regions-fill','regions-line','regions-occ','regions-occ-line'],vis['regions']);
+    setVis(['border-line'],vis['border']);
   }
 
   // ---- HTML label markers (reliable Georgian) ----
   var regMarkers=[], roadMarkers=[];
   function buildMarkers(){
     regions.features.forEach(function(f){
-      var el=document.createElement('div'); el.className='mk-reg'; el.textContent=f.properties.name_ka;
+      var el=document.createElement('div'); el.className='mk-reg'+(f.properties.occupied?' occ':'');
+      el.textContent=(f.properties.occupied?'🔒 ':'')+f.properties.name_ka;
       regMarkers.push(new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(center(f.geometry)).addTo(map));
     });
     roads.features.forEach(function(f){
@@ -292,12 +323,15 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
     map.on('mouseleave','regions-fill',function(){ map.getCanvas().style.cursor='';
       if(hoveredReg!==null) map.setFeatureState({source:'regions',id:hoveredReg},{hover:false}); hoveredReg=null;});
     map.on('click','regions-fill',function(e){ var p=e.features[0].properties;
-      popup('reg','<div class="pp"><div class="t reg">📍 '+(p.name_ka||p.REGION_ENG)+'</div><div class="b">რეგიონი · <b>'+(p.REGION_ENG||'')+'</b></div></div>',e.lngLat);});
+      var occ=(p.occupied===true||p.occupied==='true');
+      var b='რეგიონი · <b>'+(p.REGION_ENG||'')+'</b>';
+      if(occ) b+='<br><span style="color:var(--intl);font-weight:800">⚠️ ოკუპირებული ტერიტორია</span><br><span style="font-size:11px">საქართველოს კანონი „ოკუპირებული ტერიტორიების შესახებ"</span>';
+      popup('reg','<div class="pp"><div class="t reg">'+(occ?'🔒 ':'📍 ')+(p.name_ka||p.REGION_ENG)+'</div><div class="b">'+b+'</div></div>',e.lngLat);});
     ['roads-intl','roads-sh'].forEach(function(id){
       map.on('mouseenter',id,function(){map.getCanvas().style.cursor='pointer';});
       map.on('mouseleave',id,function(){map.getCanvas().style.cursor='';});
       map.on('click',id,function(e){ var p=e.features[0].properties; var sh=p.kind==='sh';
-        popup(sh?'sh':'intl','<div class="pp"><div class="t '+(sh?'sh':'intl')+'">🛣️ '+p.route+'</div><div class="b">'+(sh?'შიდასახელმწიფოებრივი გზა':'საერთაშორისო გზა')+(p.seg?' · მონაკვეთი <b>'+p.seg+'</b>':'')+'</div></div>',e.lngLat);});
+        popup(sh?'sh':'intl','<div class="pp"><div class="t '+(sh?'sh':'intl')+'">🛣️ '+p.route+'</div><div class="b">❄️ ზამთრის გზა · '+(sh?'შიდასახელმწიფოებრივი მარშრუტი':'საერთაშორისო მარშრუტი')+(p.seg?' · მონაკვეთი <b>'+p.seg+'</b>':'')+'</div></div>',e.lngLat);});
     });
   }
   var curPopup=null;
@@ -310,7 +344,7 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
   function hideLoader(){ var l=document.getElementById('loader'); if(l) l.classList.add('hide'); }
   map.on('load',function(){
     addOverlays(); buildMarkers();
-    try{ map.fitBounds([[39.9,41.0],[46.8,43.6]],{padding:40,duration:0}); }catch(e){}
+    try{ var bb=bbox(border.features[0].geometry); map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:{top:78,bottom:94,left:64,right:64},duration:0}); }catch(e){ try{ map.fitBounds([[39.9,41.0],[46.8,43.6]],{padding:40,duration:0}); }catch(e2){} }
     hideLoader();
   });
   map.on('idle',hideLoader);   // definitely rendered
@@ -380,7 +414,7 @@ html[data-theme="dark"] .mk-reg{text-shadow:0 1px 4px #000,0 0 3px #000}
     var it=rEl._out[+b.dataset.i]; if(!it)return;
     var bb=bbox(it.geom); map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:80,maxZoom:12,duration:800});
     rEl.classList.remove('on');
-    popup(it.type,'<div class="pp"><div class="t '+(it.type==='reg'?'reg':(it.type==='sh'?'sh':'intl'))+'">'+(it.type==='reg'?'📍 ':'🛣️ ')+it.label+'</div><div class="b">'+(it.type==='reg'?'რეგიონი':(it.type==='sh'?'შიდასახელმწიფოებრივი გზა':'საერთაშორისო გზა'))+'</div></div>',[( bb[0]+bb[2])/2,(bb[1]+bb[3])/2]);
+    popup(it.type,'<div class="pp"><div class="t '+(it.type==='reg'?'reg':(it.type==='sh'?'sh':'intl'))+'">'+(it.type==='reg'?'📍 ':'🛣️ ')+it.label+'</div><div class="b">'+(it.type==='reg'?'რეგიონი':'❄️ ზამთრის გზა · '+(it.type==='sh'?'შიდასახელმწიფოებრივი მარშრუტი':'საერთაშორისო მარშრუტი'))+'</div></div>',[( bb[0]+bb[2])/2,(bb[1]+bb[3])/2]);
   });
   var st; sEl.addEventListener('input',function(){clearTimeout(st);st=setTimeout(doSearch,120);});
   clrEl.addEventListener('click',function(){sEl.value='';doSearch();sEl.focus();});
