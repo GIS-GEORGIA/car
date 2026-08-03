@@ -104,6 +104,11 @@
   .empty{text-align:center;color:var(--muted);padding:40px 0}
 
   .disclaimer{border:1px solid var(--line);background:rgba(255,107,107,.06);border-radius:12px;padding:14px 16px;margin:8px 0 30px;color:#ffc9c9;font-size:.88rem}
+  .advice{border:1px solid var(--line);border-left:4px solid var(--accent2);background:linear-gradient(180deg,rgba(42,162,255,.09),rgba(22,48,74,.35));border-radius:12px;padding:16px 20px;margin:10px 0 30px}
+  .advice .lead{margin:0 0 12px;font-size:.95rem;color:var(--text)}
+  .advice ol{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:9px}
+  .advice ol li{font-size:.92rem;line-height:1.55;color:var(--muted)}
+  .advice ol li strong{color:var(--text)}
   footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:.85rem;text-align:center}
   footer a{color:var(--muted)}
 
@@ -127,6 +132,20 @@
     <p class="eyebrow">car.qgis.ge · ცნობარი</p>
     <p>საქართველოს საგზაო მოძრაობის წესების დარღვევები — ჯარიმების <strong>შემოწმებისა და გადახდის</strong> ოფიციალური პორტალები და ადმინისტრაციულ სამართალდარღვევათა კოდექსის <strong>მუხლების საძიებო ცნობარი</strong>.</p>
   </section>
+
+  <h2 class="sec">📖 დარღვევათა ცნობარი</h2>
+  <p class="sub">მოძებნეთ მუხლის ნომრით ან საკვანძო სიტყვით (მაგ. „სიჩქარე", „ალკოჰოლ", „ღვედ", „პარკირ").</p>
+
+  <div class="searchbox">
+    <div class="field">
+      <span class="si">🔎</span>
+      <input id="q" type="search" placeholder="ძებნა მუხლში და დარღვევის აღწერაში…" autocomplete="off" aria-label="ძებნა">
+      <button class="clr" id="clr" aria-label="გასუფთავება">✕</button>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <div class="rows" id="rows"></div>
 
   <h2 class="sec">💸 შემოწმება და გადახდა</h2>
   <p class="sub">ოფიციალური პორტალები, სადაც შეგიძლიათ შეამოწმოთ და გადაიხადოთ ჯარიმები:</p>
@@ -231,19 +250,19 @@
     </div>
   </div>
 
-  <h2 class="sec">📖 დარღვევათა ცნობარი</h2>
-  <p class="sub">მოძებნეთ მუხლის ნომრით ან საკვანძო სიტყვით (მაგ. „სიჩქარე", „ალკოჰოლ", „ღვედ", „პარკირ").</p>
-
-  <div class="searchbox">
-    <div class="field">
-      <span class="si">🔎</span>
-      <input id="q" type="search" placeholder="ძებნა მუხლში და დარღვევის აღწერაში…" autocomplete="off" aria-label="ძებნა">
-      <button class="clr" id="clr" aria-label="გასუფთავება">✕</button>
-    </div>
-    <div class="count" id="count"></div>
+  <h2 class="sec">💡 სასარგებლო რჩევა</h2>
+  <div class="advice">
+    <p class="lead"><strong>თუ დააზიანეთ ავტობუსი, მიკროავტობუსი ან სხვა სახელმწიფო ტრანსპორტი</strong> — პირველივე დღიდან, სანამ სადაზღვევო შეკეთებას დაიწყებს, მიჰყევით ამ ნაბიჯებს:</p>
+    <ol>
+      <li>გადაუღეთ დაზიანებას <strong>ფოტოები ყველა მხრიდან</strong>, უმნიშვნელო დეტალსაც კი.</li>
+      <li>მოითხოვეთ ტრანსპორტის <strong>ტექპასპორტი</strong> და გადაუღეთ ფოტო ორივე მხრიდან. თუ არ გაძლევენ — გადაუღეთ <strong>სახელმწიფო ნომერს</strong> ფოტო.</li>
+      <li>დანიშნეთ <strong>სამხარაულის ექსპერტიზა</strong> და დაადგინეთ მიყენებული ზარალის ოდენობა. მიღებული <strong>დასკვნა აუცილებლად შეინახეთ</strong>.</li>
+      <li>გარკვეული დროის შემდეგ დაგიკავშირდებათ სახელმწიფო ტრანსპორტის სადაზღვევო კომპანიის წარმომადგენელი და მოგთხოვთ ზარალის ანაზღაურებას — ხშირად <strong>არარეალურ თანხას</strong>. უარის შემთხვევაში ის მიმართავს სასამართლოს.</li>
+      <li>თუ სამხარაულის დასკვნა <strong>არ გექნებათ</strong>, სასამართლო იხელმძღვანელებს სადაზღვევოს მიერ წარდგენილი, უკვე აღდგენილი ტრანსპორტის ინვოისებით (არარეალურად მაღალი ფასებით), ხოლო თქვენ ვეღარ დანიშნავთ ექსპერტიზას, რადგან ტრანსპორტი უკვე აღდგენილია.</li>
+      <li>წინასწარ <strong>გაუგზავნეთ სადაზღვევო კომპანიას მეილი</strong> შემთხვევის შესახებ და მოითხოვეთ, ეტაპობრივად ჩაგაყენონ საქმის კურსში — აღსადგენი დეტალების ფასებისა და სათუნუქე-სამღებრო სამუშაოების შესახებ.</li>
+      <li>თუ თანხა მიუღებელია, შეახსენეთ, რომ გაქვთ სამხარაულის დასკვნა და მის შეფასებაზე მეტს არ გადაიხდით. <strong>მთელი მიმოწერა</strong> (თქვენი და მათი პასუხები) ამობეჭდეთ და შეინახეთ სასამართლოსთვის — რომ ვერ თქვან „არ ვიცოდით, დასკვნა ჰქონდაო".</li>
+    </ol>
   </div>
-
-  <div class="rows" id="rows"></div>
 
   <div class="disclaimer">
     ⚠️ <strong>ყურადღება:</strong> ცნობარი ატარებს საინფორმაციო ხასიათს და ეფუძნება საჯარო მონაცემებს. სანქციის ზუსტი ოდენობა და მოქმედი რედაქცია გადაამოწმეთ <a href="https://matsne.gov.ge/" target="_blank" rel="noopener">matsne.gov.ge</a>-ზე ან ოფიციალურ პორტალებზე.
