@@ -1,11 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="ka">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="description" content="საქართველოს საავტომობილო გზების ინტერაქტიული რუკა — საერთაშორისო (S) და შიდასახელმწიფოებრივი (Sh) მარშრუტები, რეგიონები და ადმინისტრაციული საზღვრები. GIS GEORGIA.">
+        <meta name="keywords" content="საქართველოს გზები, ავტოგზები, ავტორუკა, საავტომობილო გზები, roads of Georgia, GIS Georgia, car.qgis.ge">
+        <meta name="author" content="GIS GEORGIA">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="საქართველოს ავტოგზების რუკა">
+        <meta property="og:description" content="საქართველოს საავტომობილო გზების ინტერაქტიული რუკა — საერთაშორისო და შიდასახელმწიფოებრივი მარშრუტები.">
+        <meta property="og:url" content="https://car.qgis.ge/">
+        <meta name="theme-color" content="#0d1b2a">
         <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
@@ -17,7 +25,7 @@
             margin: 0;
         }
         </style>
-        <title>ზამთრის გზები საქართველოში</title>
+        <title>საქართველოს ავტოგზების რუკა | car.qgis.ge</title>
     </head>
     <body>
         <div id="map">
@@ -734,7 +742,7 @@
                 return this._div;
             };
             title.update = function () {
-                this._div.innerHTML = '<h2>ზამთრის გზები საქართველოში</h2>';
+                this._div.innerHTML = '<h2>🚗 საქართველოს ავტოგზების რუკა</h2>';
             };
             title.addTo(map);
         var baseMaps = {};
