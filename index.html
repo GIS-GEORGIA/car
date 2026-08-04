@@ -76,6 +76,7 @@ a.tbtn{text-decoration:none}
 .row{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:13.5px;cursor:pointer;user-select:none}
 .row .sw{width:22px;height:5px;border-radius:3px;flex:none}
 .row .sw.box{height:14px;width:14px;border-radius:4px}
+.row .sw.dot{height:12px;width:12px;border-radius:50%;border:1.5px solid #fff}
 .row input{accent-color:var(--accent);width:16px;height:16px;margin:0 0 0 auto}
 .seg{display:flex;gap:5px;margin-top:4px}
 .seg button{flex:1;padding:8px 6px;border-radius:9px;border:1px solid var(--panel-brd);background:transparent;color:var(--muted);
@@ -99,6 +100,7 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
 .pp .t.intl{background:linear-gradient(90deg,var(--intl),#ff7a7d)}
 .pp .t.sh{background:linear-gradient(90deg,var(--intl2),#ffc55e);color:#241800}
 .pp .t.reg{background:linear-gradient(90deg,var(--accent2),#6ec8ff)}
+.pp .t.svc{background:linear-gradient(90deg,#334155,#475569)}
 .pp .b{padding:10px 14px;font-size:13px;color:var(--muted)}
 .pp .b b{color:var(--text)}
 .maplibregl-popup-close-button{font-size:20px;color:#fff;padding:2px 8px}
@@ -160,6 +162,14 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
       <div class="row" data-layer="roads-sh"><span class="sw" style="background:#f5a623"></span> შიდასახელმწიფოებრივი (Sh) <input type="checkbox" checked></div>
     </div>
     <div class="grp">
+      <div class="lbl">🚗 სერვისები (თბილისი)</div>
+      <div class="row" data-layer="svc-fuel"><span class="sw dot" style="background:#16a34a"></span> ⛽ საწვავი <input type="checkbox" checked></div>
+      <div class="row" data-layer="svc-wash"><span class="sw dot" style="background:#06b6d4"></span> 🧼 სამრეცხაო <input type="checkbox" checked></div>
+      <div class="row" data-layer="svc-shop"><span class="sw dot" style="background:#8b5cf6"></span> 🔧 ავტოსახელოსნო <input type="checkbox" checked></div>
+      <div class="row" data-layer="svc-parts"><span class="sw dot" style="background:#ec4899"></span> 🔩 ავტონაწილები <input type="checkbox" checked></div>
+      <div class="row" data-layer="routes"><span class="sw" style="background:#2563eb"></span> 🛣️ მარშრუტი <input type="checkbox" checked></div>
+    </div>
+    <div class="grp">
       <div class="lbl">ტერიტორია</div>
       <div class="row" data-layer="regions"><span class="sw box" style="background:rgba(91,143,249,.5)"></span> რეგიონები <input type="checkbox" checked></div>
       <div class="row" data-layer="border"><span class="sw" style="background:#8493a8"></span> ქვეყნის საზღვარი <input type="checkbox" checked></div>
@@ -177,6 +187,11 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
 <script src="data/REGIONI_3.js"></script>
 <script src="data/GEORGIA_4.js"></script>
 <script src="data/roads_5.js"></script>
+<script src="data/sawvavi_5.js"></script>
+<script src="data/samrecxao_7.js"></script>
+<script src="data/saxelosno_4.js"></script>
+<script src="data/auto_parts_6.js"></script>
+<script src="data/routes_7.js"></script>
 <script>
 (function(){
   "use strict";
@@ -190,9 +205,18 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
   var REGION_COLORS=['#5B8FF9','#5AD8A6','#5D7092','#F6BD16','#E8684A','#6DC8EC','#9270CA','#FF9D4D','#269A99','#FF99C3','#7DA8FF','#B5E48C','#C3A5E6'];
 
   // ---- prepare data ----
-  var roads=(typeof json_roads_5!=='undefined')?json_roads_5:{type:'FeatureCollection',features:[]};
-  var regions=(typeof json_REGIONI_3!=='undefined')?json_REGIONI_3:{type:'FeatureCollection',features:[]};
-  var border=(typeof json_GEORGIA_4!=='undefined')?json_GEORGIA_4:{type:'FeatureCollection',features:[]};
+  function gj(n){ return (typeof window[n]!=='undefined' && window[n])?window[n]:{type:'FeatureCollection',features:[]}; }
+  var roads=gj('json_roads_5');
+  var regions=gj('json_REGIONI_3');
+  var border=gj('json_GEORGIA_4');
+  // car-service POI layers (from ezdanapak/car)
+  var SVC=[
+    {id:'svc-fuel', src:'sawvavi',   data:gj('json_sawvavi_5'),   color:'#16a34a', icon:'⛽', name:'საწვავი'},
+    {id:'svc-wash', src:'samrecxao', data:gj('json_samrecxao_7'), color:'#06b6d4', icon:'🧼', name:'სამრეცხაო'},
+    {id:'svc-shop', src:'saxelosno', data:gj('json_saxelosno_4'), color:'#8b5cf6', icon:'🔧', name:'ავტოსახელოსნო'},
+    {id:'svc-parts',src:'autoparts', data:gj('json_auto_parts_6'),color:'#ec4899', icon:'🔩', name:'ავტონაწილები'}
+  ];
+  var routes=gj('json_routes_7');
 
   roads.features.forEach(function(f){
     var nm=(f.properties.Name||'').trim();
@@ -250,7 +274,8 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
   map.addControl(new maplibregl.ScaleControl({maxWidth:110,unit:'metric'}),'bottom-left');
   map.addControl(new maplibregl.FullscreenControl(),'bottom-right');
 
-  var vis={'roads-intl':true,'roads-sh':true,'regions':true,'border':true};
+  var vis={'roads-intl':true,'roads-sh':true,'regions':true,'border':true,
+           'svc-fuel':true,'svc-wash':true,'svc-shop':true,'svc-parts':true,'routes':true};
   var lblReg=true, lblRoad=false;
 
   function addOverlays(){
@@ -279,6 +304,15 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
       layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#f5a623','line-width':['interpolate',['linear'],['zoom'],6,1.5,12,3.8]}});
     if(!map.getLayer('roads-intl')) map.addLayer({id:'roads-intl',type:'line',source:'roads',filter:['==',['get','kind'],'intl'],
       layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e5484d','line-width':['interpolate',['linear'],['zoom'],6,2.2,12,5.5]}});
+    // car routes (lines) + service POIs (circles, on top)
+    if(!map.getSource('routes')) map.addSource('routes',{type:'geojson',data:routes});
+    if(!map.getLayer('svc-routes')) map.addLayer({id:'svc-routes',type:'line',source:'routes',
+      layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#2563eb','line-width':['interpolate',['linear'],['zoom'],9,2,15,5],'line-dasharray':[2,1.6],'line-opacity':0.9}});
+    SVC.forEach(function(s){
+      if(!map.getSource(s.src)) map.addSource(s.src,{type:'geojson',data:s.data});
+      if(!map.getLayer(s.id)) map.addLayer({id:s.id,type:'circle',source:s.src,
+        paint:{'circle-radius':['interpolate',['linear'],['zoom'],9,3.5,14,8],'circle-color':s.color,'circle-stroke-color':'#ffffff','circle-stroke-width':1.6,'circle-opacity':0.95}});
+    });
     applyVisibility();
     wireInteractions();
   }
@@ -289,6 +323,8 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
     setVis(['roads-sh','roads-sh-case'],vis['roads-sh']);
     setVis(['regions-fill','regions-line','regions-occ','regions-occ-line'],vis['regions']);
     setVis(['border-line'],vis['border']);
+    setVis(['svc-routes'],vis['routes']);
+    SVC.forEach(function(s){ setVis([s.id],vis[s.id]); });
   }
 
   // ---- HTML label markers (reliable Georgian) ----
@@ -332,6 +368,15 @@ html[data-theme="dark"] .mk-reg.occ{color:#ff7a7d}
       map.on('mouseleave',id,function(){map.getCanvas().style.cursor='';});
       map.on('click',id,function(e){ var p=e.features[0].properties; var sh=p.kind==='sh';
         popup(sh?'sh':'intl','<div class="pp"><div class="t '+(sh?'sh':'intl')+'">🛣️ '+p.route+'</div><div class="b">❄️ ზამთრის გზა · '+(sh?'შიდასახელმწიფოებრივი მარშრუტი':'საერთაშორისო მარშრუტი')+(p.seg?' · მონაკვეთი <b>'+p.seg+'</b>':'')+'</div></div>',e.lngLat);});
+    });
+    SVC.forEach(function(s){
+      map.on('mouseenter',s.id,function(){map.getCanvas().style.cursor='pointer';});
+      map.on('mouseleave',s.id,function(){map.getCanvas().style.cursor='';});
+      map.on('click',s.id,function(e){ var p=e.features[0].properties||{};
+        var title=p.Name||s.name;
+        var sub=(s.id==='svc-fuel'&&p.Fuel_GEO)?('საწვავი · '+p.Fuel_GEO):s.name;
+        popup('svc','<div class="pp"><div class="t svc">'+s.icon+' '+title+'</div><div class="b">'+sub+'</div></div>',e.lngLat);
+      });
     });
   }
   var curPopup=null;
